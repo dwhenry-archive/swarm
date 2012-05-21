@@ -11,6 +11,9 @@ rescue Bundler::BundlerError => e
 end
 require 'rake'
 
+# import File.join(File.dirname(__FILE__), 'lib/tasks/swarm')
+import 'lib/tasks/swarm.rake'
+
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options

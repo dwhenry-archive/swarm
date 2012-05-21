@@ -1,10 +1,10 @@
-require 'rails_support_hacks'
-
 require 'singleton'
+
 require 'rubygems'
+require 'database_cleaner'
 require 'rspec'
 require 'cucumber'
-require 'json'
+require 'base64'
 require 'yaml'
 
 begin
@@ -14,22 +14,20 @@ end
 
 $:.unshift(File.dirname(__FILE__))
 
-require 'swarm/utilities/voice'
-require 'swarm/utilities/output_helper'
-require 'swarm/utilities/util'
-
-require 'swarm/queen'
-require 'swarm/database'
+require 'swarm/output_helper'
 require 'swarm/directive'
 require 'swarm/drone'
-require 'swarm/handler/spec'
-# require 'swarm/handler/feature'
+require 'swarm/voice'
+require 'swarm/queen'
+require 'swarm/spec_formatter'
+require 'swarm/feature_formatter'
 require 'swarm/pilot/base'
 require 'swarm/pilot/spec_pilot'
-# require 'swarm/pilot/feature_pilot'
+require 'swarm/pilot/feature_pilot'
 require 'swarm/formatter/base'
 require 'swarm/formatter/fail_fast_progress_formatter'
 require 'swarm/formatter/yaml_formatter'
+require 'swarm/util'
 
 module Swarm
   def self.debug=(bool)
@@ -77,11 +75,11 @@ module Swarm
   def self.socket_path
     File.join(Rails.root, 'tmp', 'swarm.socket')
   end
-
+  
   def self.num_slow_files=(num)
     @num_slow_files = num
   end
-
+  
   def self.num_slow_files
     @num_slow_files || 5
   end
@@ -89,7 +87,7 @@ module Swarm
   def self.num_drones=(num_drones)
     @num_drones = num_drones
   end
-
+  
   def self.num_drones
     @num_drones
   end

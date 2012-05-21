@@ -8,5 +8,11 @@ require 'swarm'
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 RSpec.configure do |config|
-  
+
+end
+
+class Rails
+  def self.root
+    File.join(File.dirname(__FILE__))
+  end
 end
