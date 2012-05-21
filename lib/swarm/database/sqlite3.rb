@@ -9,7 +9,9 @@ module Swarm
       end
 
       def recreate_database(options)
-        system("rm #{File.join(Rails.root, options[:database])}")
+        if File.exists?(File.join(Rails.root, options[:database]))
+          system("rm #{File.join(Rails.root, options[:database])}")
+        end
         system("cp #{Rails.root}/{#{@name},#{options[:database]}}")
       end
 

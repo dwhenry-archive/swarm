@@ -45,7 +45,7 @@ module Swarm
     def build_drone_deployment_config
       @config = {}
       (@instances).times do |i|
-        @config["#{@name}#{i + 1}"] = default_config
+        @config["#{@name}_#{i + 1}"] = default_config
       end
 
       detect_databases_needing_create.each do |db|

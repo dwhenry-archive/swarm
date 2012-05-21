@@ -1,23 +1,25 @@
 module Swarm
-  module OutputHelper
-    def self.included(base)
-      base.class_eval do
-        include InstanceMethods
-        extend ClassMethods
+  module Utilities
+    module OutputHelper
+      def self.included(base)
+        base.class_eval do
+          include InstanceMethods
+          extend ClassMethods
+        end
       end
-    end
 
-    module InstanceMethods
-      def debug(msg)
-        self.class.debug(msg)
+      module InstanceMethods
+        def debug(msg)
+          self.class.debug(msg)
+        end
       end
-    end
 
-    module ClassMethods
-      def debug(msg)
-        if Swarm.debug?
-          $stdout.write("DEBUG: #{msg}\n")
-          $stdout.flush
+      module ClassMethods
+        def debug(msg)
+          if Swarm.debug?
+            $stdout.write("DEBUG: #{msg}\n")
+            $stdout.flush
+          end
         end
       end
     end

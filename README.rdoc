@@ -1,9 +1,21 @@
 = swarm
 
-Description goes here.
+Parallel rspec and cucumber test runner
+
+== Why
+
+This codebase is designed to running tests in parallel from a forked instance of the application.  The advantage of this is that the application only needs to be loaded once instead of once for each runner (as in parallel test).  In addition as the tests to be run are placed in a queue with each runner requesting the next item off the queue when it finishes its last test this ensure the best possible split of tests between the runner.
+
+== Todo
+
+* Try and make this a fully tested gem (seems insane that the testing gem is not tested really)
+* Increase stability and reduce issue resulting from timeouts breaking successive tests (bug is unconfirmed)
+* Split functionality out into smaller class to improve clarity of code
+* Enable support for different versions of rspec/cucumber/rails
+* Add support for alternative testing frameworks
 
 == Contributing to swarm
- 
+
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
 * Fork the project
@@ -13,6 +25,9 @@ Description goes here.
 * Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
 
 == Copyright
+
+* This is a tidy up of code originally written shared by
+https://github.com/envato/swarm.git
 
 Copyright (c) 2012 David Henry. See LICENSE.txt for
 further details.
