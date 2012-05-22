@@ -1,4 +1,5 @@
 require 'swarm/database/sqlite3'
+require 'swarm/database/mysql'
 
 module Swarm
   class Database
@@ -13,7 +14,7 @@ module Swarm
       when ActiveRecord::ConnectionAdapters::SQLite3Adapter
         Sqlite3.new
       else
-        new
+        Mysql.new
       end
     end
 
@@ -73,7 +74,7 @@ module Swarm
     end
 
     def schema_dump_path
-      Swarm::Util.escape_path(Swarm.schema_dump_path)
+      Swarm::Utilities::Util.escape_path(Swarm.schema_dump_path)
     end
   end
 end

@@ -71,7 +71,7 @@ module Swarm
       end
 
       def load_schema(options)
-        `mysql #{access_opts} #{options[:database]} < #{Swarm::Util.escape_path(Swarm.schema_dump_path)}`
+        `mysql #{access_opts} #{options[:database]} < #{Swarm::Utilities::Util.escape_path(Swarm.schema_dump_path)}`
       end
     end
   end

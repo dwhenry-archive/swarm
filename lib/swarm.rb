@@ -22,11 +22,14 @@ require 'swarm/queen'
 require 'swarm/database'
 require 'swarm/directive'
 require 'swarm/drone'
+
 require 'swarm/handler/spec'
-# require 'swarm/handler/feature'
+require 'swarm/handler/feature'
+
 require 'swarm/pilot/base'
 require 'swarm/pilot/spec_pilot'
-# require 'swarm/pilot/feature_pilot'
+require 'swarm/pilot/feature_pilot'
+
 require 'swarm/formatter/base'
 require 'swarm/formatter/fail_fast_progress_formatter'
 require 'swarm/formatter/yaml_formatter'

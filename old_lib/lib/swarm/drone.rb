@@ -1,7 +1,7 @@
 module Swarm
   class Drone
     attr_reader :name
-    
+
     include Singleton
     include OutputHelper
 
@@ -33,7 +33,7 @@ module Swarm
           case directive = next_directive
           when Directive::Exec
             Dir.chdir(@options[:project_root])
-            pilot.exec(directive)            
+            pilot.exec(directive)
             relay(Directive::Ready)
           when Directive::Quit
             debug("Directive::Quit")
