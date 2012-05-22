@@ -42,20 +42,15 @@ module Swarm
         end
       rescue SystemExit
         exit 1
-      rescue Exception => e
-        puts e.message
-        puts e.backtrace
       end
     end
 
     def relay(directive)
       begin
-        uplink.puts(Directive.prepare(directive))
+        uplink.write_directive directive
       rescue Errno::EPIPE
         debug("Lost uplink to queen!")
         exit 1
-      rescue Exception => e
-        debug(e.inspect)
       end
     end
 
@@ -84,11 +79,11 @@ module Swarm
     end
 
     def next_directive
-      Directive.interpret(uplink.gets(Swarm::Directive::END_OF_MESSAGE_STRING))
+      uplink.get_directive
     end
 
     def uplink
-      @uplink ||= UNIXSocket.open(Swarm.socket_path)
+      @uplink ||= Comms.uplink
     end
   end
 end

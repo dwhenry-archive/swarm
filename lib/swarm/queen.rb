@@ -91,26 +91,24 @@ module Swarm
     end
 
     def start_server
-      FileUtils.rm(Swarm.socket_path) if File.exists?(Swarm.socket_path)
-      @server = UNIXServer.new(Swarm.socket_path)
+      Comms.open
       yield
       @num_drones.times do |drone_id|
         begin
-          drone_socket = @server.accept_nonblock
-          start_drone_handler(drone_id, drone_socket)
+          start_drone_handler(drone_id)
         rescue Errno::EAGAIN, Errno::ECONNABORTED, Errno::EPROTO, Errno::EINTR
-          IO.select([@server])
+          IO.select([Comms.server])
           retry
         end
       end
     end
 
-    def start_drone_handler(drone_id, downlink)
+    def start_drone_handler(drone_id)
+      downlink = Comms.downlink
       Thread.start do
-        loop do
-          begin
-            directive = Directive.interpret(downlink.gets(Swarm::Directive::END_OF_MESSAGE_STRING))
-            case directive
+        begin
+          loop do
+            case directive = downlink.get_directive
             when Directive::TestFailed
               @formatter.test_failed(directive.filename, directive.detail)
             when Directive::TestPassed
@@ -129,16 +127,13 @@ module Swarm
               begin
                 file = @queue.pop(true)
                 file_processed(drone_id, file)
-                downlink.puts(Directive.prepare(Directive::Exec.new(:file => file)))
+                downlink.write_directive Directive::Exec.new(:file => file)
               rescue ThreadError
                 debug("Queue empty, sending Directive::Quit")
-                downlink.puts(Directive.prepare(Directive::Quit))
+                downlink.write_directive Directive::Quit
                 break
               end
             end
-          rescue Exception => e
-            puts e.message
-            puts e.backtrace.join("\n") if e.backtrace
           end
         end
       end

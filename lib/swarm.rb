@@ -18,6 +18,8 @@ require 'swarm/utilities/voice'
 require 'swarm/utilities/output_helper'
 require 'swarm/utilities/util'
 
+
+require 'swarm/comms'
 require 'swarm/queen'
 require 'swarm/database'
 require 'swarm/directive'
