@@ -15,7 +15,7 @@ module Swarm
       end
 
       def test_failed(filename, detail)
-        @drone.relay(Directive::TestFailed.new(:filename => filename, :details => detail))
+        @drone.relay(Directive::TestFailed.new(:filename => filename, :detail => detail))
       end
 
       def test_pending(detail)

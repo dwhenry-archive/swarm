@@ -11,8 +11,4 @@ RSpec.configure do |config|
 
 end
 
-class Rails
-  def self.root
-    File.join(File.dirname(__FILE__))
-  end
-end
+require 'rails_support_hacks'
