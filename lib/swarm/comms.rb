@@ -2,36 +2,41 @@ module Swarm
   class Comms
     class << self
       def open
-        @instance ||= new
+        instance
       end
 
       def server
-        @instance.server
+        instance.server
       end
 
-      def downlink(override=nil)
-        Downlink.new(override || server)
+      def downlink
+        ServerSide.new(server)
       end
 
       def uplink
-        Uplink.new
+        ClientSide.new
       end
-    end
 
-    def initialize
-      @server = create_server
+    private
+
+      def instance
+        @instance ||= new
+      end
     end
 
     def server
       @server
     end
 
+  private
+    def initialize
+      @server = create_server
+    end
+
     def create_server
       FileUtils.rm(path) if File.exists?(path)
       UNIXServer.new(path)
     end
-
-  private
 
     def path
       Swarm.socket_path
@@ -46,18 +51,18 @@ module Swarm
 
       def write_directive(directive)
         @link.puts(
-          Directive.prepare(directive)
+          directive.prepare
         )
       end
     end
 
-    class Uplink < Link
+    class ClientSide < Link
       def initialize
         @link = UNIXSocket.open(Swarm.socket_path)
       end
     end
 
-    class Downlink < Link
+    class ServerSide < Link
       def initialize(server)
         @link = server.accept_nonblock
       end

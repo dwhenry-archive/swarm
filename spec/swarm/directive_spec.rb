@@ -16,14 +16,14 @@ describe Swarm::Directive do
   let(:multiline_directive) { Swarm::Directive::TestFailed.new(:filename => 'fail', :detail => "details 1\ndetails 2") }
 
   it 'can see a directive across the link' do
-    uplink.puts(Swarm::Directive.prepare(directive))
+    uplink.puts(directive.prepare)
     received = Swarm::Directive.interpret(downlink.gets(Swarm::Directive::END_OF_MESSAGE_STRING))
     received.file.should == directive.file
   end
 
   it 'can send multiple directives' do
-    uplink.puts(Swarm::Directive.prepare(directive))
-    uplink.puts(Swarm::Directive.prepare(second_directive))
+    uplink.puts(directive.prepare)
+    uplink.puts(second_directive.prepare)
     received = Swarm::Directive.interpret(downlink.gets(Swarm::Directive::END_OF_MESSAGE_STRING))
     second_received = Swarm::Directive.interpret(downlink.gets(Swarm::Directive::END_OF_MESSAGE_STRING))
     received.file.should == directive.file
@@ -31,7 +31,7 @@ describe Swarm::Directive do
   end
 
   it 'can process multiline directives' do
-    uplink.puts(Swarm::Directive.prepare(multiline_directive))
+    uplink.puts(multiline_directive.prepare)
     received = Swarm::Directive.interpret(downlink.gets(Swarm::Directive::END_OF_MESSAGE_STRING))
     received.to_s.should == multiline_directive.to_s
   end

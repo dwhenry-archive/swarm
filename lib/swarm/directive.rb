@@ -12,6 +12,10 @@ module Swarm
         !!(str =~ self.const_get('REGEXP'))
       end
 
+      def self.prepare
+        new.prepare
+      end
+
       def initialize(details={})
         details.delete('class_name')
         @details = details
@@ -24,6 +28,7 @@ module Swarm
       def to_s
         "#{json}#{END_OF_MESSAGE_STRING}\n"
       end
+      alias :prepare :to_s
 
       def json
         @details.merge('class_name' => self.class.to_s).to_json
@@ -51,10 +56,6 @@ module Swarm
     class TestSkipped < Base; end
     class Quit < Base; end
     class Ready < Base; end
-
-    def self.prepare(directive)
-      (directive.is_a?(Class) ? directive.new : directive).to_s
-    end
 
     def self.interpret(raw_directive)
       raw_directive.strip!
