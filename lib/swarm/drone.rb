@@ -21,36 +21,30 @@ module Swarm
       @options = options
       @name = "#{Process.pid}, #{@options[:database]}"
 
-      begin
-        recreate_database
-        load_schema
-        connect_to_database
+      recreate_database
+      load_schema
+      connect_to_database
 
-        debug("Directive::Ready")
-        relay(Directive::Ready)
-
-        loop do
-          case directive = next_directive
-          when Directive::Exec
-            Dir.chdir(@options[:project_root])
-            pilot.exec(directive)
-            relay(Directive::Ready)
-          when Directive::Quit
-            debug("Directive::Quit")
-            break
-          end
-        end
-      rescue SystemExit
-        exit 1
-      end
+      execution_loop
     end
 
-    def relay(directive)
-      begin
-        uplink.write_directive directive
-      rescue Errno::EPIPE
-        debug("Lost uplink to queen!")
-        exit 1
+    def execution_loop
+      uplink ||= Comms.uplink
+      debug("Directive::Ready")
+      uplink.relay(Directive::Ready)
+
+      Dir.chdir(@options[:project_root])
+
+      loop do
+        case directive = uplink.get_directive
+        when Directive::Exec
+          pilot.exec(directive)
+          uplink.relay(Directive::Ready)
+
+        when Directive::Quit
+          debug("Directive::Quit")
+          break
+        end
       end
     end
 
@@ -76,14 +70,6 @@ module Swarm
       ActiveRecord::Base.connection.disconnect!
       db_config = ActiveRecord::Base.configurations[Rails.env].merge('database' => @options[:database])
       ActiveRecord::Base.establish_connection(db_config)
-    end
-
-    def next_directive
-      uplink.get_directive
-    end
-
-    def uplink
-      @uplink ||= Comms.uplink
     end
   end
 end

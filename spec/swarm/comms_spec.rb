@@ -48,6 +48,18 @@ describe Swarm::Comms::ServerSide do
     subject.write_directive(directive)
   end
 
+  describe '#relay' do
+    it 'writes the directive' do
+      link.should_receive(:puts).with('directive string')
+      subject.relay(directive)
+    end
+
+    it 'exits the code if connection to socket lost' do
+      link.should_receive(:puts).and_raise(Errno::EPIPE)
+      expect { subject.relay(directive) }.to raise_error(SystemExit)
+    end
+  end
+
   it 'can read a directive from the it' do
     Swarm::Directive.should_receive(:interpret).with('read directive')
     link.should_receive(:gets)
@@ -74,6 +86,18 @@ describe Swarm::Comms::ClientSide do
   it 'can can have directives written to it' do
     link.should_receive(:puts).with('directive string')
     subject.write_directive(directive)
+  end
+
+  describe '#relay' do
+    it 'writes the directive' do
+      link.should_receive(:puts).with('directive string')
+      subject.relay(directive)
+    end
+
+    it 'exits the code if connection to socket lost' do
+      link.should_receive(:puts).and_raise(Errno::EPIPE)
+      expect { subject.relay(directive) }.to raise_error(SystemExit)
+    end
   end
 
   it 'can read a directive from the it' do
