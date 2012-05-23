@@ -1,5 +1,5 @@
 describe 'specs' do
-  it 'pass' do
+  it 'fail' do
     true.should == true
   end
 end
