@@ -106,8 +106,8 @@ module Swarm
     def start_drone_handler(drone_id)
       downlink = Comms.downlink
       Thread.start do
-        begin
-          loop do
+        loop do
+          begin
             case directive = downlink.get_directive
             when Directive::TestFailed
               @formatter.test_failed(directive.filename, directive.detail)

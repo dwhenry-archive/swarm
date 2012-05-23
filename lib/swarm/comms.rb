@@ -9,10 +9,9 @@ module Swarm
         @instance.server
       end
 
-      def downlink
-        @downlink ||= Downlink.new(@instance)
+      def downlink(override=nil)
+        Downlink.new(override || server)
       end
-      alias :connect :downlink
 
       def uplink
         Uplink.new
@@ -56,13 +55,11 @@ module Swarm
       def initialize
         @link = UNIXSocket.open(Swarm.socket_path)
       end
-
     end
 
     class Downlink < Link
-      def initialize(comms)
-        @comms = comms
-        @link = comms.server.accept_nonblock
+      def initialize(server)
+        @link = server.accept_nonblock
       end
     end
   end
