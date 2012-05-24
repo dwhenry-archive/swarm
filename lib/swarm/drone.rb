@@ -28,8 +28,15 @@ module Swarm
       execution_loop
     end
 
+    def uplink
+      @uplink ||= Comms.uplink
+    end
+
+    def relay(directive)
+      @uplink.relay(directive)
+    end
+
     def execution_loop
-      uplink ||= Comms.uplink
       debug("Directive::Ready")
       uplink.relay(Directive::Ready)
 

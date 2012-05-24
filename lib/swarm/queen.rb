@@ -20,7 +20,7 @@ module Swarm
 
     def rule
       set_number_of_drones
-      @db.setup(@num_drones)
+      @db.setup(Swarm.num_drones)
       populate_queue
 
       @formatter.started
@@ -91,7 +91,7 @@ module Swarm
     def start_server
       Comms.open
       yield
-      @num_drones.times do |drone_id|
+      Swarm.num_drones.times do |drone_id|
         begin
           start_drone_handler(drone_id)
         rescue Errno::EAGAIN, Errno::ECONNABORTED, Errno::EPROTO, Errno::EINTR
