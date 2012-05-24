@@ -92,7 +92,7 @@ module Swarm
   end
 
   def self.num_drones=(num_drones)
-    @num_drones = num_drones
+    @num_drones = num_drones.to_i
   end
 
   def self.num_drones

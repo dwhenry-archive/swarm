@@ -67,14 +67,12 @@ module Swarm
     end
 
     def set_number_of_drones
-      @num_drones = if Swarm.num_drones
-        Swarm.num_drones.to_i
-      else
-        cores = detect_cores
-        (cores * 2 - (cores / 2))
-      end
-      drone_str = @num_drones == 1 ? "drone" : "drones"
-      debug("Starting #{@num_drones} #{drone_str}")
+      return if Swarm.num_drones
+      cores = detect_cores
+      Swarm.num_drones = (cores * 2 - (cores / 2))
+
+      drone_str = Swarm.num_drones == 1 ? "drone" : "drones"
+      debug("Starting #{Swarm.num_drones} #{drone_str}")
     end
 
     def choose_formatter
