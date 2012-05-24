@@ -17,7 +17,7 @@ module Swarm
     class FeaturePilot < Pilot::Base
       def prepare
         # Some features can't handle being parallelised. Run them up front.
-        # configure_runtime(['--no-profile', '--tags', '@series', '--format', 'Swarm::Handler::Feature'])
+        # configure_runtime(['--no-profile', '--tags', '@series', '--format', 'Swarm::Runner::Feature'])
         # debug("running non concurrent features")
         # runtime.run!
         # debug("completed non-concurrent features")
@@ -28,7 +28,7 @@ module Swarm
           configure_runtime([
             '--no-profile', '--require', File.join(Rails.root, 'features'),
             '--strict', '--tags', '~@series', '--tags', '~@wip', '--tags',
-            '~@completed_pending', '--format', 'Swarm::Handler::Feature',
+            '~@completed_pending', '--format', 'Swarm::Runner::Feature',
             directive.file
           ])
 

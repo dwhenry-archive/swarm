@@ -1,5 +1,5 @@
 module Swarm
-  module Handler
+  module Runner
     class Feature
       def initialize(step_mother, io, options)
         @last_failed_test = []
@@ -28,7 +28,7 @@ module Swarm
           test_result_handler.test_pending "#{step_match.format_args(lambda{|param| "*#{param}*"})} PENDING"
         else
           step_name = step_match.format_args(lambda{|param| "*#{param}*"})
-          raise "Eeek! Handler::Feature doesn't know how to handle '#{status.inspect}'"
+          raise "Eeek! Runner::Feature doesn't know how to handle '#{status.inspect}'"
         end
       end
 

@@ -1,7 +1,7 @@
 require 'rspec/core/formatters/base_formatter'
 
 module Swarm
-  module Handler
+  module Runner
     class Spec < RSpec::Core::Formatters::BaseFormatter
       def test_result_handler
         Swarm::Drone.pilot

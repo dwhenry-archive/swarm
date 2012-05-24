@@ -9,7 +9,7 @@ module Swarm
         # Some specs can't handle being parallelised. Run them up front.
         if Swarm.series_files
           RSpec.configure do |config|
-            config.add_formatter(Swarm::Handler::Spec)
+            config.add_formatter(Swarm::Runner::Spec)
           end
           debug("running non-concurrent specs")
           RSpec::Core::Runner.run(Swarm.series_files)
@@ -20,7 +20,7 @@ module Swarm
       def exec(directive)
         begin
           RSpec.configure do |config|
-            config.add_formatter(Swarm::Handler::Spec)
+            config.add_formatter(Swarm::Runner::Spec)
           end
           run_and_relay_runtime(directive) { RSpec::Core::Runner.run([directive.file]) }
         rescue SystemExit

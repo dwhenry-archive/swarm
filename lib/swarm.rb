@@ -25,8 +25,8 @@ require 'swarm/database'
 require 'swarm/directive'
 require 'swarm/drone'
 
-require 'swarm/handler/spec'
-require 'swarm/handler/feature'
+require 'swarm/runner/spec'
+require 'swarm/runner/feature'
 
 require 'swarm/pilot/base'
 require 'swarm/pilot/spec_pilot'
