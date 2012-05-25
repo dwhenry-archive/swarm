@@ -43,8 +43,6 @@ module Swarm
     end
 
     class Link
-      include Utilities::OutputHelper
-
       def get_directive
         Directive.interpret(
           @link.gets(Swarm::Directive::END_OF_MESSAGE_STRING)
@@ -61,7 +59,7 @@ module Swarm
         begin
           write_directive directive
         rescue Errno::EPIPE
-          debug("Lost uplink to queen!")
+          Swarm::Debug("Lost uplink to queen!")
           exit 1
         end
       end

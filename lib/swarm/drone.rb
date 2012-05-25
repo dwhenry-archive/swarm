@@ -3,7 +3,6 @@ module Swarm
     attr_reader :name
 
     include Singleton
-    include Utilities::OutputHelper
 
     def self.deploy(options)
       instance.deploy(options)
@@ -58,7 +57,7 @@ module Swarm
     protected
 
     def debug(msg)
-      super("DRONE(#{@name}): #{msg}")
+      Swarm::Debug("DRONE(#{@name}): #{msg}")
     end
 
     def recreate_database

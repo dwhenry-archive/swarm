@@ -1,6 +1,5 @@
 module Swarm
   class Directive
-    include Utilities::OutputHelper
 
     END_OF_MESSAGE_STRING = "\nend_directive"
 
@@ -32,6 +31,11 @@ module Swarm
 
       def json
         @details.merge('class_name' => self.class.to_s).to_json
+      end
+
+      def action_name
+        str = self.class.to_s
+        str.split('::').last.underscore
       end
 
       def method_missing(mth, *args)

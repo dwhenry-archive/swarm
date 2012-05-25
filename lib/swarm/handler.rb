@@ -1,7 +1,5 @@
 module Swarm
   class Handler
-    include Utilities::OutputHelper
-
     def self.start(formatter, db)
       server = new(formatter, db)
       server.start { server.deploy_drones }
@@ -29,44 +27,68 @@ module Swarm
 
     def deploy_drones
       Drone.pilot.prepare
-      @db.config.each { |db, opts| deploy_drone(db, opts) }
-    end
-
-    def deploy_drone(db, options)
-      fork { Drone.deploy(options.merge(:database => db)) }
+      @db.config.each do |db, options|
+        fork { Drone.deploy(options.merge(:database => db)) }
+      end
     end
 
     def start_thread(drone_id)
-      downlink = Comms.downlink
-      Thread.start do
-        loop do
-          begin
-            case directive = downlink.get_directive
-            when Directive::TestFailed
-              @formatter.test_failed(directive.filename, directive.detail)
-            when Directive::TestPassed
-              @formatter.test_passed
-            when Directive::TestUndefined
-              @formatter.test_undefined(directive.detail)
-            when Directive::TestSkipped
-              @formatter.test_skipped
-            when Directive::TestPending
-              @formatter.test_pending(directive.detail)
-            when Directive::Runtime
-              @formatter.file_runtime(directive.runtime, directive.file)
-            when Directive::Ready
+      processor = Processor.new(Comms.downlink, @formatter, drone_id)
 
-              begin
-                file = Swarm::Files.next
-                Swarm::Record.file_processed(drone_id, file)
-                downlink.write_directive Directive::Exec.new(:file => file)
-              rescue ThreadError
-                debug("Queue empty, sending Directive::Quit")
-                downlink.write_directive Directive::Quit
-                break
-              end
-            end
-          end
+      Thread.start do
+        processor.run
+      end
+    rescue Exception => e
+      puts e.message
+      puts e.backtrace
+    end
+
+    class Processor
+      def initialize(downlink, formatter, drone_id)
+        @downlink = downlink
+        @formatter = formatter
+        @drone_id = drone_id
+      end
+
+      def run
+        until @exit do
+          directive = @downlink.get_directive
+          send(directive.action_name, directive)
+        end
+        Swarm::Debug("Queue empty, sending Directive::Quit")
+        @downlink.write_directive Directive::Quit
+      end
+
+      def test_failed(directive)
+        @formatter.test_failed(directive.filename, directive.detail)
+      end
+
+      def test_passed(directive)
+        @formatter.test_passed
+      end
+
+      def test_undefined(directive)
+        @formatter.test_undefined(directive.detail)
+      end
+
+      def test_skipped(directive)
+        @formatter.test_skipped
+      end
+
+      def test_pending(directive)
+        @formatter.test_pending(directive.detail)
+      end
+
+      def runtime(directive)
+        @formatter.file_runtime(directive.runtime, directive.file)
+      end
+
+      def ready(directive)
+        if file = Swarm::Files.next
+          Swarm::Record.file_processed(@drone_id, file)
+          @downlink.write_directive Directive::Exec.new(:file => file)
+        else
+          @exit = true
         end
       end
     end

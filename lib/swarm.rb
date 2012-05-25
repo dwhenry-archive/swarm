@@ -41,6 +41,14 @@ require 'swarm/formatter/fail_fast_progress_formatter'
 require 'swarm/formatter/yaml_formatter'
 
 module Swarm
+  class Debug
+    include Swarm::Utilities::OutputHelper
+  end
+
+  def self.Debug(msg)
+    Swarm::Debug.debug(msg)
+  end
+
   def self.debug=(bool)
     @debug = bool
   end

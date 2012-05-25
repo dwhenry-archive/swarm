@@ -18,9 +18,9 @@ module Swarm
       def prepare
         # Some features can't handle being parallelised. Run them up front.
         # configure_runtime(['--no-profile', '--tags', '@series', '--format', 'Swarm::Runner::Feature'])
-        # debug("running non concurrent features")
+        # Swarm::Debug("running non concurrent features")
         # runtime.run!
-        # debug("completed non-concurrent features")
+        # Swarm::Debug("completed non-concurrent features")
       end
 
       def exec(directive)

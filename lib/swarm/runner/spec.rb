@@ -8,7 +8,7 @@ module Swarm
       end
 
       def example_failed(example)
-        Swarm::Pilot::SpecPilot.debug("Fail: #{example.full_description}")
+        Swarm::Debug("Fail: #{example.full_description}")
         detail = [example.full_description, example.execution_result[:exception].message]
         backtrace = example.execution_result[:exception].backtrace
         detail << format_backtrace(backtrace)

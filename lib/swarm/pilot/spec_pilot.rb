@@ -11,9 +11,9 @@ module Swarm
           RSpec.configure do |config|
             config.add_formatter(Swarm::Runner::Spec)
           end
-          debug("running non-concurrent specs")
+          Swarm::Debug("running non-concurrent specs")
           RSpec::Core::Runner.run(Swarm.series_files)
-          debug("completed non-concurrent specs")
+          Swarm::Debug("completed non-concurrent specs")
         end
       end
 
@@ -26,7 +26,7 @@ module Swarm
         rescue SystemExit
           exit 1
         rescue Exception => e
-          debug("Drone #{drone.name} handling error: #{e.inspect}")
+          Swarm::Debug("Drone #{drone.name} handling error: #{e.inspect}")
           detail = [e.message]
           detail << "On file: #{directive.file}"
           detail << e.backtrace.take_while{|line| line !~ %r{lib/swarm/lib/swarm/pilot/spec_pilot.rb} }.join("\n")

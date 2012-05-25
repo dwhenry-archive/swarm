@@ -4,7 +4,6 @@ require 'swarm/database/mysql'
 module Swarm
   class Database
     attr_reader :config
-    include Utilities::OutputHelper
 
     SCHEMA_SANITIZATION_SED = "sed -e 's/ AUTO_INCREMENT=[0-9]*//' -e 's/--.*//'"
     MD5_CMD = RUBY_PLATFORM =~ /darwin/ ? 'md5' : 'md5sum'
@@ -57,7 +56,7 @@ module Swarm
       detect_databases_needing_schema_reload.each do |db|
         @config[db][:reload_schema] = true
       end
-      debug(@config.inspect)
+      Swarm::Debug(@config.inspect)
     end
 
 

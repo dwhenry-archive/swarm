@@ -34,7 +34,7 @@ module Swarm
         return # TODO: if this check required.. it doesn't do anything??
         return if schema_migration_in_database == schema_migrations_in_file_system
         # this is now done in the rake file
-        debug("rake db:schema:load...")
+        Swarm::Debug("rake db:schema:load...")
         # system "rake db:schema:load RAILS_ENV=test"
       end
 
@@ -53,7 +53,7 @@ module Swarm
       end
 
       def dump_schema
-        debug("Dumping schema...")
+        Swarm::Debug("Dumping schema...")
         system "#{mysqldump(test_database_name)} > #{schema_dump_path}"
       end
 

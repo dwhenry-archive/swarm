@@ -3,7 +3,6 @@ require 'ruby-debug'
 module Swarm
   class Queen
     include Singleton
-    include Utilities::OutputHelper
 
     attr_reader :formatter
 
@@ -52,7 +51,7 @@ module Swarm
       Swarm.num_drones = (cores * 2 - (cores / 2))
 
       drone_str = Swarm.num_drones == 1 ? "drone" : "drones"
-      debug("Starting #{Swarm.num_drones} #{drone_str}")
+      Swarm::Debug("Starting #{Swarm.num_drones} #{drone_str}")
     end
 
     def choose_formatter
@@ -77,7 +76,7 @@ module Swarm
       else
         raise "Swarm doesn't know how to detect the number of CPUs for #{RUBY_PLATFORM}"
       end.strip.to_i
-      debug("Detected #{logical_cpu_count} logical CPUs")
+      Swarm::Debug("Detected #{logical_cpu_count} logical CPUs")
       logical_cpu_count
     end
 
