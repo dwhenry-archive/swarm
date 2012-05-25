@@ -21,12 +21,13 @@ module Swarm
     def rule
       set_number_of_drones
       @db.setup(Swarm.num_drones)
-      populate_queue
 
-      @formatter.started
+      Swarm::Files.populate
+
+      @formatter.start
       voice.start # not sure I like calling this a 'voice'
 
-      Swarm::Handler.start(@formatter, @queue, @db)
+      Swarm::Handler.start(@formatter, @db)
 
       @formatter.completed
       Swarm::Record.save_runtimes(@formatter.runtimes)
@@ -41,11 +42,6 @@ module Swarm
       require File.join(Rails.root, 'config', 'environment')
       # require File.join(Rails.root, 'config', 'environments', Rails.env)
       load File.join(Rails.root, 'config', 'application.rb')
-    end
-
-    def populate_queue
-      @queue = Queue.new
-      Swarm::Record.order_by_runtime(Swarm.files).each { |file| @queue.push(file) }
     end
 
     protected

@@ -70,7 +70,7 @@ module Swarm
       def completed
       end
 
-      def started
+      def start
         @started_at ||= Time.now
       end
 

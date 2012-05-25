@@ -2,16 +2,15 @@ module Swarm
   class Handler
     include Utilities::OutputHelper
 
-    def self.start(formatter, queue, db)
-      server = new(formatter, queue, db)
+    def self.start(formatter, db)
+      server = new(formatter, db)
       server.start { server.deploy_drones }
       at_exit { Comms.server.close if Comms.server }
       Process.waitall
     end
 
-    def initialize(formatter, queue, db)
+    def initialize(formatter, db)
       @formatter = formatter
-      @queue = queue
       @db = db
     end
 
@@ -56,10 +55,9 @@ module Swarm
             when Directive::Runtime
               @formatter.file_runtime(directive.runtime, directive.file)
             when Directive::Ready
-              notify_first_drone_ready
 
               begin
-                file = @queue.pop(true)
+                file = Swarm::Files.next
                 Swarm::Record.file_processed(drone_id, file)
                 downlink.write_directive Directive::Exec.new(:file => file)
               rescue ThreadError
@@ -71,12 +69,6 @@ module Swarm
           end
         end
       end
-    end
-
-    def notify_first_drone_ready
-      return if @notified
-      @formatter.started
-      @notified = true
     end
   end
 end

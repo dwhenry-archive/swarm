@@ -24,6 +24,7 @@ require 'swarm/queen'
 require 'swarm/database'
 require 'swarm/directive'
 require 'swarm/drone'
+require 'swarm/files'
 
 require 'swarm/runner/spec'
 require 'swarm/runner/feature'
