@@ -11,26 +11,30 @@ module Swarm
       end
 
       def test_undefined(detail)
-        @drone.relay(Directive::TestUndefined.new(:detail => detail))
+        relay(Directive::TestUndefined.new(:detail => detail))
       end
 
       def test_failed(filename, detail)
-        @drone.relay(Directive::TestFailed.new(:filename => filename, :detail => detail))
+        relay(Directive::TestFailed.new(:filename => filename, :detail => detail))
       end
 
       def test_pending(detail)
-        @drone.relay(Directive::TestPending.new(:detail => detail))
+        relay(Directive::TestPending.new(:detail => detail))
       end
 
       def test_passed
-        @drone.relay(Directive::TestPassed)
+        relay(Directive::TestPassed)
       end
 
       def test_skipped
-        @drone.relay(Directive::TestSkipped)
+        relay(Directive::TestSkipped)
       end
 
       def prepare
+      end
+
+      def relay(directive)
+        drone.uplink.relay(directive)
       end
 
       protected
@@ -38,7 +42,7 @@ module Swarm
       def run_and_relay_runtime(directive)
         started_at = Time.now
         yield
-        @drone.relay(Directive::Runtime.new(:runtime => Time.now - started_at, :file => directive.file))
+        relay(Directive::Runtime.new(:runtime => Time.now - started_at, :file => directive.file))
       end
     end
   end

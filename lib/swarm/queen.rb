@@ -29,9 +29,9 @@ module Swarm
       at_exit { @server.close if @server }
       Process.waitall
       @formatter.completed
-      save_runtimes(@formatter.runtimes)
+      Swarm::Record.save_runtimes(@formatter.runtimes)
       voice.stop
-      describe_processed_files if Swarm.debug? || @formatter.any_failed?
+      Swarm::Record.describe_processed_files if Swarm.debug? || @formatter.any_failed?
       exit 1 if @formatter.any_failed? || @formatter.any_undefined?
     end
 
@@ -43,28 +43,12 @@ module Swarm
       load File.join(Rails.root, 'config', 'application.rb')
     end
 
+    def populate_queue
+      @queue = Queue.new
+      Swarm::Record.order_by_runtime(Swarm.files).each { |file| @queue.push(file) }
+    end
+
     protected
-
-    def order_by_runtime(files)
-      if File.exists?(runtimes_filename)
-        files_with_runtime = File.read(runtimes_filename).split("\n")
-        (files - files_with_runtime) + (files_with_runtime & files)
-      else
-        files
-      end
-    end
-
-    def save_runtimes(runtimes)
-      runtimes = runtimes.sort_by { |runtime, file| runtime }.reverse
-      FileUtils.mkdir_p(Swarm.runtimes_dir)
-      File.open(runtimes_filename, "w") do |fd|
-        fd.puts(runtimes.map { |runtime, file| file }.join("\n"))
-      end
-    end
-
-    def runtimes_filename
-      File.join(Swarm.runtimes_dir, Drone.pilot.class.name.demodulize)
-    end
 
     def set_number_of_drones
       return if Swarm.num_drones
@@ -158,12 +142,6 @@ module Swarm
       @formatter.started
       @notified = true
     end
-
-    def populate_queue
-      @queue = Queue.new
-      order_by_runtime(Swarm.files).each { |file| @queue.push(file) }
-    end
-
     def deploy_drones
       Drone.pilot.prepare
       @db.config.each { |db, opts| deploy_drone(db, opts) }
