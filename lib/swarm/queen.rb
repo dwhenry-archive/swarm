@@ -25,9 +25,9 @@ module Swarm
 
       @formatter.started
       voice.start # not sure I like calling this a 'voice'
-      start_server { deploy_drones }
-      at_exit { @server.close if @server }
-      Process.waitall
+
+      Swarm::Handler.start(@formatter, @queue, @db)
+
       @formatter.completed
       Swarm::Record.save_runtimes(@formatter.runtimes)
       voice.stop
@@ -71,86 +71,6 @@ module Swarm
     def voice
       @voice ||= Utilities::Voice.new
     end
-
-    def start_server
-      Comms.open
-      yield
-      Swarm.num_drones.times do |drone_id|
-        begin
-          start_drone_handler(drone_id)
-        rescue Errno::EAGAIN, Errno::ECONNABORTED, Errno::EPROTO, Errno::EINTR
-          IO.select([Comms.server])
-          retry
-        end
-      end
-    end
-
-    def start_drone_handler(drone_id)
-      downlink = Comms.downlink
-      Thread.start do
-        loop do
-          begin
-            case directive = downlink.get_directive
-            when Directive::TestFailed
-              @formatter.test_failed(directive.filename, directive.detail)
-            when Directive::TestPassed
-              @formatter.test_passed
-            when Directive::TestUndefined
-              @formatter.test_undefined(directive.detail)
-            when Directive::TestSkipped
-              @formatter.test_skipped
-            when Directive::TestPending
-              @formatter.test_pending(directive.detail)
-            when Directive::Runtime
-              @formatter.file_runtime(directive.runtime, directive.file)
-            when Directive::Ready
-              notify_first_drone_ready
-
-              begin
-                file = @queue.pop(true)
-                file_processed(drone_id, file)
-                downlink.write_directive Directive::Exec.new(:file => file)
-              rescue ThreadError
-                debug("Queue empty, sending Directive::Quit")
-                downlink.write_directive Directive::Quit
-                break
-              end
-            end
-          end
-        end
-      end
-    end
-
-    def describe_processed_files
-      processed_files.each do |drone_id, files|
-        puts "\nDrone #{drone_id}:\n"
-        files.each_with_index { |file, i| puts "#{i}. #{file}" }
-      end
-    end
-
-    def file_processed(drone_id, file)
-      processed_files[drone_id] ||= []
-      processed_files[drone_id] << file
-    end
-
-    def processed_files
-      @processed_files ||= {}
-    end
-
-    def notify_first_drone_ready
-      return if @notified
-      @formatter.started
-      @notified = true
-    end
-    def deploy_drones
-      Drone.pilot.prepare
-      @db.config.each { |db, opts| deploy_drone(db, opts) }
-    end
-
-    def deploy_drone(db, options)
-      fork { Drone.deploy(options.merge(:database => db)) }
-    end
-
 
     def detect_cores
       logical_cpu_count = case RUBY_PLATFORM
