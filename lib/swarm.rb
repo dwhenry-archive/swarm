@@ -40,6 +40,9 @@ require 'swarm/formatter/base'
 require 'swarm/formatter/fail_fast_progress_formatter'
 require 'swarm/formatter/yaml_formatter'
 
+require 'rake'
+load 'swarm/tasks/swarm.rake'
+
 module Swarm
   class Debug
     include Swarm::Utilities::OutputHelper
