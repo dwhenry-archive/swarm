@@ -41,12 +41,7 @@ require 'swarm/formatter/fail_fast_progress_formatter'
 require 'swarm/formatter/yaml_formatter'
 
 require 'rake'
-# load 'swarm/tasks/swarm.rake'
-
-rake_tasks do
-  load 'swarm/tasks/swarm.rake'
-  # load "rspec/rails/tasks/rspec.rake"
-end
+load 'swarm/tasks/swarm.rake'
 
 module Swarm
   class Debug
