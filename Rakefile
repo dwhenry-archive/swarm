@@ -20,8 +20,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "swarm"
   gem.homepage = "http://github.com/dwhenry/swarm"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Testing tool}
+  gem.description = %Q{Testing tool utilise multiple processors}
   gem.email = "dw_henry@yahoo.com.au"
   gem.authors = ["David Henry"]
   # dependencies defined in Gemfile
