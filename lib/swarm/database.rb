@@ -1,6 +1,3 @@
-require 'swarm/database/sqlite3'
-require 'swarm/database/mysql'
-
 module Swarm
   class Database
     attr_reader :config
@@ -9,11 +6,16 @@ module Swarm
     MD5_CMD = RUBY_PLATFORM =~ /darwin/ ? 'md5' : 'md5sum'
 
     def self.select
-      case ActiveRecord::Base.connection
-      when ActiveRecord::ConnectionAdapters::SQLite3Adapter
+      adapter = ActiveRecord::Base.connection.instance_values["config"][:adapter]
+      case adapter
+      when 'sqlite3'
+        require "swarm/database/sqlite3"
         Sqlite3.new
-      else
+      when 'mysql'
+        require "swarm/database/mysql"
         Mysql.new
+      else
+        raise "Unknown database adapter type: #{adapter}"
       end
     end
 
