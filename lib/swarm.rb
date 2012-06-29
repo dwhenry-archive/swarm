@@ -41,7 +41,10 @@ require 'swarm/formatter/fail_fast_progress_formatter'
 require 'swarm/formatter/yaml_formatter'
 
 # require 'rake'
-Dir["tasks/**/*.rake"].each { |ext| load ext } if defined?(Rake)
+if defined?(Rake)
+  debugger
+  Dir["tasks/**/*.rake"].each { |ext| load ext }
+end
 
 module Swarm
   class Debug
