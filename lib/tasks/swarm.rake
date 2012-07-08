@@ -1,7 +1,7 @@
 namespace :swarm do
   desc "run all the specs using the swarm multi process thingo"
   task :specs, [:path] do |t, args|
-    RAILS_ENV = ENV['RAILS_ENV'] = 'test'
+    RAILS_ENV = ENV['RAILS_ENV'] = 'test' unless defined? RAILS_ENV
     require 'swarm'
     Swarm.drone_pilot = Swarm::Pilot::SpecPilot
     path = File.join(RAILS_ROOT, (args[:path] || 'spec'), '**', '*_spec.rb')
@@ -13,7 +13,7 @@ namespace :swarm do
 
   desc "run all the cucumber features using the swarm multi process thingo"
   task :features, [:path] do |t, args|
-    RAILS_ENV = ENV['RAILS_ENV'] = 'cucumber'
+    RAILS_ENV = ENV['RAILS_ENV'] = 'cucumber' unless defined? RAILS_ENV
     require 'swarm'
     Swarm.drone_pilot = Swarm::Pilot::FeaturePilot
     Swarm.files = Dir[File.join(RAILS_ROOT, (args[:path] || 'features'), '**', '*.feature')]

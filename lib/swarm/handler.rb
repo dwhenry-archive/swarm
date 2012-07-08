@@ -3,7 +3,9 @@ module Swarm
     def self.start(formatter, db)
       server = new(formatter, db)
       server.start { server.deploy_drones }
-      at_exit { Comms.server.close if Comms.server }
+      at_exit {
+        Comms.close
+      }
       Process.waitall
     end
 
@@ -16,13 +18,11 @@ module Swarm
       Comms.open
       yield
       Swarm.num_drones.times do |drone_id|
-        begin
-          start_thread(drone_id)
-        rescue Errno::EAGAIN, Errno::ECONNABORTED, Errno::EPROTO, Errno::EINTR
-          IO.select([Comms.server])
-          retry
-        end
+        start_thread(drone_id)
       end
+    rescue => e
+      puts e.message
+      puts e.backtrace
     end
 
     def deploy_drones
@@ -38,9 +38,6 @@ module Swarm
       Thread.start do
         processor.run
       end
-    rescue Exception => e
-      puts e.message
-      puts e.backtrace
     end
 
     class Processor

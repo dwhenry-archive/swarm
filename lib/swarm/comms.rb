@@ -1,3 +1,6 @@
+require 'timeout'
+# status = Timeout::timeout(5) {
+
 module Swarm
   class Comms
     class << self
@@ -17,6 +20,10 @@ module Swarm
         ClientSide.new
       end
 
+      def close
+        instance.close if server
+      end
+
     private
 
       def instance
@@ -26,6 +33,11 @@ module Swarm
 
     def server
       @server
+    end
+
+    def close
+      @server.close
+      @server = nil
     end
 
   private
@@ -68,12 +80,17 @@ module Swarm
     class ClientSide < Link
       def initialize
         @link = UNIXSocket.open(Swarm.socket_path)
+        super
       end
     end
 
     class ServerSide < Link
       def initialize(server)
         @link = server.accept_nonblock
+        super
+      rescue Errno::EAGAIN, Errno::ECONNABORTED, Errno::EPROTO, Errno::EINTR
+        IO.select([Comms.server])
+        retry
       end
     end
   end
