@@ -11,7 +11,7 @@ module Swarm
       when 'sqlite3'
         require "swarm/database/sqlite3"
         Sqlite3.new
-      when 'mysql'
+      when 'mysql', 'mysql2'
         require "swarm/database/mysql"
         Mysql.new
       else
