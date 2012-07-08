@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{swarm}
-  s.version = "0.0.8"
+  s.version = "0.0.9"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["David Henry"]
-  s.date = %q{2012-06-29}
+  s.date = %q{2012-07-08}
   s.description = %q{Testing tool utilise multiple processors}
   s.email = %q{dw_henry@yahoo.com.au}
   s.extra_rdoc_files = [
@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
     "lib/rails_support_hacks.rb",
     "lib/swarm.rb",
     "lib/swarm/comms.rb",
+    "lib/swarm/cover.rb",
     "lib/swarm/database.rb",
     "lib/swarm/database/mysql.rb",
     "lib/swarm/database/sqlite3.rb",
