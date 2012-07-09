@@ -15,14 +15,10 @@ if defined?(String) && !''.respond_to?(:constantize)
   String.send :include, StringExtend
 end
 
-unless defined?(RAILS_ROOT)
-  RAILS_ROOT = File.join(File.dirname(__FILE__), '..', 'test_app')
-end
-
 unless defined?(Rails)
   module Rails
     def self.root
-      RAILS_ROOT
+      @root ||= File.join(File.dirname(__FILE__), '..', 'test_app')
     end
   end
 end

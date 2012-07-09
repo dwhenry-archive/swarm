@@ -66,7 +66,11 @@ module Swarm
       end
 
       def recreate_database(options)
-        `mysqladmin #{access_opts} -f --no-beep drop #{options[:database]}`
+        begin
+          `mysqladmin #{access_opts} -f --no-beep drop #{options[:database]}`
+        rescue => e
+          puts "Could not drop database #{options[:database]}"
+        end
         `mysqladmin #{access_opts} -f --no-beep create #{options[:database]}`
       end
 

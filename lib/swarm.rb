@@ -1,5 +1,3 @@
-require 'rails_support_hacks'
-
 require 'singleton'
 require 'rubygems'
 require 'rspec'
@@ -94,7 +92,8 @@ module Swarm
   end
 
   def self.socket_path
-    File.join(Rails.root, 'tmp', 'swarm.socket')
+    # File.join(Rails.root, 'tmp', 'swarm.socket')
+    '/tmp/swarm.socket'
   end
 
   def self.num_slow_files=(num)
